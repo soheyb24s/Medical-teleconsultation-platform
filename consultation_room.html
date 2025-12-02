@@ -1,0 +1,618 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salle de Consultation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --background: #f8fafc;
+            --surface: #fff;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e5e7eb;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: var(--background);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            color: var(--text);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        .chat-container {
+            width: 100vw;
+            height: 100vh;
+            min-height: 100vh;
+            min-width: 100vw;
+            background: var(--surface);
+            border-radius: 0;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            color: #fff;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .chat-header-info img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+        }
+        .chat-header-info h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .chat-header-info .status {
+            font-size: 0.95rem;
+            color: #d1d5db;
+        }
+        .chat-header-actions button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .chat-header-actions button:hover {
+            color: var(--secondary);
+        }
+        .end-consultation-btn {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            z-index: 20;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .end-consultation-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+        .messages-area {
+            flex: 1;
+            padding: 32px 24px 24px 24px;
+            background: var(--background);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .message {
+            max-width: 60%;
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-size: 1rem;
+            background: var(--surface);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.04);
+            position: relative;
+            word-break: break-word;
+            color: var(--text);
+            align-self: flex-start;
+            margin-bottom: 2px;
+        }
+        .message.sent {
+            background: #c4b5fd;  /* Light purple */
+            color: #1e293b;  /* Dark text for contrast */
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .message.received {
+            background: #e2e8f0;  /* More intense light gray background */
+            color: #1e293b;  /* Dark text for contrast */
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 6px;
+            text-align: right;
+        }
+        .input-area {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .input-area input[type="text"] {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--background);
+            outline: none;
+            transition: border 0.2s;
+        }
+        .input-area input[type="text"]:focus {
+            border: 1.5px solid var(--primary);
+        }
+        .input-area button, .input-area label {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .input-area button:hover, .input-area label:hover {
+            background: var(--primary-light);
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-upload label {
+            margin: 0;
+            padding: 10px 16px;
+        }
+        .file-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin: 8px 0;
+        }
+        .file-message i {
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+        .file-info {
+            flex: 1;
+        }
+        .file-name {
+            font-weight: 600;
+        }
+        .file-size {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+        .download-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95em;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 900px) {
+            .chat-container {
+                width: 100vw;
+                height: 100vh;
+                min-width: 100vw;
+                min-height: 100vh;
+                border-radius: 0;
+                margin: 0;
+            }
+        }
+        @media (max-width: 600px) {
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 18px 10px;
+            }
+            .chat-header-info h3 {
+                font-size: 1rem;
+            }
+            .messages-area {
+                padding: 16px 6px 12px 6px;
+            }
+            .input-area {
+                padding: 10px 6px;
+            }
+            .end-consultation-btn {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.95);
+            margin: 15% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(0.7);
+            opacity: 0;
+            animation: modalOpen 0.3s ease forwards;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 240, 240, 0.95));
+        }
+        .modal-title {
+            margin: 0;
+            color: #333;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-body {
+            padding: 20px;
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-radius: 0 0 15px 15px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .modal-btn-cancel {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .modal-btn-cancel:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .modal-btn-confirm {
+            background-color: var(--danger);
+            color: white;
+        }
+        .modal-btn-confirm:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes modalOpen {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .waiting-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .waiting-modal-content {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.95);
+            margin: 15% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .countdown {
+            font-size: 3em;
+            color: var(--danger);
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .waiting-message {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--danger);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden Fields -->
+    <input type="hidden" id="user-id" value="{{ user.id }}">
+    <input type="hidden" id="consultation-id" value="{{ consultation.id }}">
+    <input type="hidden" id="is-doctor" value="{{ is_doctor|lower }}">
+
+    <div class="chat-container">
+        <!-- End Consultation Button -->
+        {% if is_doctor %}
+        <button class="end-consultation-btn" onclick="showModal()">
+            <i class="fas fa-phone-slash"></i>
+            Terminer la consultation
+        </button>
+        {% endif %}
+
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="profile-circle">
+                    {{ user.full_name|slice:":1"|upper }}
+                </div>
+                <div>
+                    {% if not is_doctor %}
+                        <h3>Dr. {{ other_party.full_name }}</h3>
+                    {% else %}
+                        <h3>{{ other_party.full_name }}</h3>
+                    {% endif %}
+                    <p class="status">En ligne</p>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-area" id="messages-area">
+            <!-- Messages will be dynamically added here -->
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="file-upload">
+                <input type="file" id="file-input" aria-label="Upload file">
+                <label for="file-input" title="Upload file"><i class="fas fa-paperclip"></i></label>
+            </div>
+            <input type="text" id="messageInput" placeholder="Écrivez votre message ici..." aria-label="Message input">
+            <button id="sendButton" title="Send message" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>
+                    Terminer la consultation
+                </h3>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir terminer cette consultation ? Cette action ne peut pas être annulée.
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <button class="modal-btn modal-btn-confirm" onclick="handleEndConsultation()">
+                    <i class="fas fa-check"></i> Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="waitingModal" class="waiting-modal">
+        <div class="waiting-modal-content">
+            <div class="spinner"></div>
+            <div class="waiting-message">La consultation est en cours de terminaison...</div>
+            <div class="countdown" id="countdown">5</div>
+        </div>
+    </div>
+
+    <script>
+        // End consultation
+        function endConsultation() {
+            if (confirm('Êtes-vous sûr de vouloir terminer la consultation ?')) {
+                fetch('/api/end-consultation/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        consultation_id: "{{ consultation.id }}"
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                });
+            }
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function handleEndConsultation() {
+            const consultationId = "{{ consultation.id }}";
+            fetch('/api/end-consultation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    consultation_id: consultationId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                    showWaitingModal();
+                    // Notify other party through WebSocket
+                    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                        chatSocket.send(JSON.stringify({
+                            type: 'consultation_end',
+                            message: 'Consultation ended'
+                        }));
+                    }
+                } else {
+                    alert('Une erreur est survenue lors de la terminaison de la consultation.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de la terminaison de la consultation.');
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        function showModal() {
+            document.getElementById('confirmationModal').style.display = 'block';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmationModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function showWaitingModal() {
+            const modal = document.getElementById('waitingModal');
+            const countdownElement = document.getElementById('countdown');
+            modal.style.display = 'block';
+            
+            let timeLeft = 5;
+            
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdownElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    // Redirect based on user type
+                    const isDoctorInput = document.getElementById('is-doctor');
+                    const redirectUrl = isDoctorInput.value === 'true' ? '/doctor/interface/' : '/patient/interface/';
+                    window.location.href = redirectUrl;
+                }
+            }, 1000);
+        }
+
+        // Initialize WebSocket connection
+        const consultationId = "{{ consultation.id }}";
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/consultation/' + consultationId + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'consultation_end') {
+                showWaitingModal();
+            }
+        };
+
+        // Update the end consultation button to use showModal
+        document.querySelector('.end-consultation-btn').onclick = showModal;
+    </script>
+    <script src="{% static 'js/consultation.js' %}" defer></script>
+</body>
+</html> 

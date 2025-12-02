@@ -1,0 +1,122 @@
+{% load static %} <!-- تحميل الأداة الإضافية للتعامل مع الملفات الثابتة -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Téléconsultation Médicale</title>
+    <!-- Add FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+   
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/static/images/1.jpg'); /* خلفية طبية */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-end; /* تغيير من flex-start إلى flex-end */
+            align-items: center;
+            text-align: center;
+        }
+        .container {
+            padding: 40px;
+            border-radius: 15px 0 0 15px; /* تغيير الزوايا المدورة */
+            backdrop-filter: blur(10px); /* تأثير ضبابي */
+            height: 100vh; /* ارتفاع كامل للصفحة */
+            display: flex;
+            flex-direction: column; /* ترتيب العناصر عموديًا */
+            justify-content: center;
+            align-items: center;
+            width: 500px; /* تقليل العرض قليلاً */
+            margin-right: 0; /* إضافة margin-right: 0 */
+             /* إضافة خلفية شفافة */
+        }
+        h1 {
+            color: #00796b; /* لون أخضر داكن */
+            margin-bottom: 20px;
+            font-size: 28px; /* تقليل حجم الخط */
+            font-weight: 600;
+            text-transform: uppercase; /* إضافة حروف كبيرة */
+            letter-spacing: 1px; /* زيادة المسافة بين الحروف */
+        }
+        p {
+            color: #004d40; /* لون نص هادئ */
+            font-size: 16px; /* تقليل حجم الخط */
+            margin-bottom: 30px;
+            font-weight: 500; /* زيادة سمك الخط */
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column; /* ترتيب الأزرار عموديًا */
+            gap: 15px; /* تقليل المسافة بين الأزرار */
+            width: 90%; /* تقليل عرض الأزرار */
+        }
+        .buttons button {
+            padding: 15px 30px; /* تقليل حجم الأزرار */
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* مسافة بين الأيقونة والنص */
+        }
+        .buttons button i {
+            font-size: 20px; /* حجم الأيقونات */
+        }
+        .buttons button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .buttons button.patient {
+            background: linear-gradient(135deg, #00bcd4, #0097a7); /* تدرج أزرق */
+        }
+        .buttons button.medecin {
+            background: linear-gradient(135deg, #4caf50, #388e3c); /* تدرج أخضر */
+        }
+        .buttons button.admin {
+            background: linear-gradient(135deg, #e67e22, #d35400); /* تدرج برتقالي */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenue sur la Téléconsultation Médicale</h1>
+        <p>Veuillez sélectionner votre type d'utilisateur pour continuer</p>
+
+        <div class="buttons">
+            <button class="patient" onclick="redirectToPatient()">
+                <i class="fas fa-user-injured"></i> Patient
+            </button>
+            <button class="medecin" onclick="redirectToMedecin()">
+                <i class="fas fa-user-md"></i> Médecin
+            </button>
+            <button class="admin" onclick="redirectToAdmin()">
+                <i class="fas fa-user-shield"></i> Administrateur
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToPatient() {
+            window.location.href = "{% url 'patient_login' %}"; // رابط صفحة تسجيل دخول المريض
+        }
+        function redirectToMedecin() {
+            window.location.href = "{% url 'doctor_login' %}"; // رابط صفحة تسجيل دخول الطبيب
+        }
+        function redirectToAdmin() {
+            window.location.href = "{% url 'admin:login' %}"; // رابط صفحة تسجيل دخول المسؤول
+        }
+    </script>
+</body>
+</html>

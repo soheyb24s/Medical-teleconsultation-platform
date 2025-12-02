@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Sign In/Up Form</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-image: url('/static/images/aa.jpg');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-weight: 700;
+      margin: 0 0 15px 0;
+      font-size: 28px;
+      color: #2c3e50;
+      letter-spacing: 0.5px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    p {
+      font-size: 14px;
+      font-weight: 100;
+      line-height: 20px;
+      letter-spacing: 0.5px;
+      margin: 20px 0 30px;
+    }
+
+    span {
+      font-size: 14px;
+      color: #666;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+
+    a {
+      color: #333;
+      font-size: 14px;
+      text-decoration: none;
+      margin: 15px 0;
+    }
+
+    button {
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(135deg, #4CAF50, #388E3C);
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 45px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      margin: 10px 0;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #0099cc, #08b5ff);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button:focus {
+      outline: none;
+    }
+
+    button.ghost {
+      background: transparent;
+      border: 2px solid #FFFFFF;
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    button.ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    form {
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 30px;
+      height: 100%;
+      text-align: center;
+    }
+
+    input {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 10px 15px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #08b5ff;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 15px;
+      margin: 5px 0;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background-color: #f5f5f5;
+      font-size: 14px;
+    }
+
+    .required {
+      color: red;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      width: 850px;
+      max-width: 100%;
+      min-height: 550px;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+      padding: 20px 0;
+    }
+
+    .sign-in-container {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+    }
+
+    .container.right-panel-active .sign-in-container {
+      transform: translateX(100%);
+    }
+
+    .sign-up-container {
+      left: 0;
+      width: 50%;
+      opacity: 0;
+      z-index: 1;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container.right-panel-active .sign-up-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+      animation: show 0.6s;
+    }
+
+    @keyframes show {
+      0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+      }
+      
+      50%, 100% {
+        opacity: 1;
+        z-index: 5;
+      }
+    }
+
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 100;
+    }
+
+    .container.right-panel-active .overlay-container{
+      transform: translateX(-100%);
+    }
+
+    .overlay {
+      background-image: url('/static/images/2.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 0 0;
+      color: #FFFFFF;
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .container.right-panel-active .overlay {
+      transform: translateX(50%);
+    }
+
+    .overlay-panel {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 20px;
+      text-align: center;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .overlay-left {
+      transform: translateX(-20%);
+    }
+
+    .container.right-panel-active .overlay-left {
+      transform: translateX(0);
+    }
+
+    .overlay-right {
+      right: 0;
+      transform: translateX(0);
+    }
+
+    .container.right-panel-active .overlay-right {
+      transform: translateX(20%);
+    }
+
+    .social-container {
+      margin: 10px 0;
+    }
+
+    .social-container a {
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 7px;
+      height: 40px;
+      width: 40px;
+      color: #666;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .social-container a:hover {
+      border-color: #08b5ff;
+      color: #08b5ff;
+      transform: translateY(-2px);
+    }
+
+    .messages {
+      width: 100%;
+      max-width: 850px;
+      margin: 20px auto;
+      padding: 0 20px;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .alert .close-message {
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 5px;
+      margin-left: 10px;
+    }
+
+    .sign-up-container h1 {
+      font-size: 18px;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sign-up-container span {
+      font-size: 13px;
+      margin: 8px 0;
+    }
+
+    .sign-up-container .social-container {
+      margin: 8px 0;
+    }
+
+    .sign-up-container button {
+      margin-top: 8px;
+      width: 130px;
+      padding: 8px 25px;
+      font-size: 13px;
+    }
+
+    .sign-up-container p {
+      margin: 8px 0;
+      font-size: 12px;
+    }
+
+    .overlay-panel h1 {
+      color: #FFFFFF;
+      font-size: 24px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+    }
+
+    .overlay-panel p {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #FFFFFF;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .overlay-panel button.ghost {
+      padding: 10px 30px;
+      margin-top: 10px;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .overlay-right button.ghost {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .overlay-right button.ghost:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+      {{ message }}
+      <button class="close-message" onclick="this.parentElement.style.display='none'">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="container" id="container">
+    <div class="form-container sign-up-container">
+      <form method="POST" action="{% url 'doctor_login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="register" value="true">
+        <h1>Créer un compte médecin</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <span>ou utilisez votre email pour vous inscrire</span>
+        <input type="text" name="full_name" placeholder="Nom complet *" required />
+        <input type="email" name="email" placeholder="Email *" required />
+        <input type="text" name="license_number" placeholder="Numéro de licence *" required />
+        <select name="speciality" required style="width: 100%; padding: 10px 15px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; background-color: #f5f5f5; font-size: 14px;">
+            <option value="">Sélectionnez votre spécialité *</option>
+            <option value="Médecine Général">Médecine Général</option>
+            <option value="Cardiologie">Cardiologie</option>
+            <option value="Neurologie">Neurologie</option>
+            <option value="Dentiste">Dentiste</option>
+            <option value="Ophtalmologie">Ophtalmologie</option>
+            <option value="Orthopédie">Orthopédie</option>
+        </select>
+        <input type="password" name="password1" placeholder="Mot de passe *" required />
+        <input type="password" name="password2" placeholder="Confirmer le mot de passe *" required />
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">Les champs marqués d'un <span class="required">*</span> sont obligatoires.</p>
+        <button type="submit">S'inscrire</button>
+      </form>
+    </div>
+    <div class="form-container sign-in-container">
+      <form method="POST" action="{% url 'doctor_login' %}">
+        {% csrf_token %}
+        <h1>Connexion</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <span>ou utilisez votre compte</span>
+        <input type="email" name="email" placeholder="Email *" required />
+        <input type="password" name="password" placeholder="Mot de passe *" required />
+        <a href="#">Mot de passe oublié?</a>
+        <button type="submit">Se connecter</button>
+      </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Bon retour!</h1>
+          <p>Pour rester connecté avec nous, veuillez vous connecter avec vos informations personnelles</p>
+          <button class="ghost" id="signIn">Se connecter</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Bonjour, Docteur!</h1>
+          <p>Entrez vos données personnelles et commencez votre parcours avec nous</p>
+          <button class="ghost" id="signUp">S'inscrire</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+    const signUpForm = document.querySelector('.sign-up-container form');
+
+    signUpButton.addEventListener('click', () => {
+      container.classList.add('right-panel-active');
+    });
+
+    signInButton.addEventListener('click', () => {
+      container.classList.remove('right-panel-active');
+    });
+
+    // Form validation
+    signUpForm.addEventListener('submit', function(e) {
+      const password1 = signUpForm.querySelector('input[name="password1"]').value;
+      const password2 = signUpForm.querySelector('input[name="password2"]').value;
+      const email = signUpForm.querySelector('input[name="email"]').value;
+      const name = signUpForm.querySelector('input[name="full_name"]').value;
+      const license = signUpForm.querySelector('input[name="license_number"]').value;
+
+      // Check if all fields are filled
+      if (!email || !password1 || !password2 || !name || !license) {
+        e.preventDefault();
+        alert('Veuillez remplir tous les champs obligatoires');
+        return;
+      }
+
+      // Check if passwords match
+      if (password1 !== password2) {
+        e.preventDefault();
+        alert('Les mots de passe ne correspondent pas');
+        return;
+      }
+
+      // Check password length
+      if (password1.length < 8) {
+        e.preventDefault();
+        alert('Le mot de passe doit contenir au moins 8 caractères');
+        return;
+      }
+    });
+
+    // Auto-hide messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const messages = document.querySelector('.messages');
+        if (messages) {
+          messages.style.display = 'none';
+        }
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
